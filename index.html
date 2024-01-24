@@ -7,16 +7,9 @@
     <script>
         AFRAME.registerComponent('clickable', {
             init: function () {
-                var originalColor = this.el.getAttribute('material').color;
-                this.el.addEventListener('mouseenter', () => {
-                    this.el.setAttribute('material', 'color', 'yellow');
-                });
-                this.el.addEventListener('mouseleave', () => {
-                    this.el.setAttribute('material', 'color', originalColor);
-                });
                 this.el.addEventListener('click', () => {
-                    // Implement the click action here
-                    console.log('Icon clicked:', this.el.getAttribute('name'));
+                    // Replace this alert with your actual click logic
+                    alert('Clicked on: ' + this.el.getAttribute('name'));
                 });
             }
         });
@@ -41,13 +34,14 @@
         <a-entity id="icons-grid" position="-2.5 1 -3">
             <!-- Icons -->
             <!-- Repeat this for each icon, changing the ID, position, and image path -->
-            <a-entity class="clickable" position="0 0 0">
-                <a-image src="path_to_icon_image.png" name="icon1" 
+            <a-entity class="clickable" position="0 0 0" name="icon1">
+                <a-image src="path_to_icon_image.png"
                          width="0.5" height="0.5" position="0 0 0" 
                          rounded="true" color="#FFF"></a-image>
                 <a-text value="App 1" align="center" 
                         position="0 -0.6 0" width="4"></a-text>
             </a-entity>
+            <!-- Repeat for other icons -->
         </a-entity>
 
         <!-- Environment -->
