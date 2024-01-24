@@ -2,16 +2,32 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>VR Interface with Preloaded Clickable Icons</title>
+    <title>VR Interface with Clickable Icons</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script>
-
-        // Component to handle clicks on the icons
-        AFRAME.registerComponent('icon-handler', {
+        // Component to handle icon hover and click
+        AFRAME.registerComponent('icon-interact', {
+            schema: {
+                color: {default: '#FFF'},
+                hoverColor: {default: '#FF0'},
+                name: {default: ''}
+            },
             init: function () {
-                this.el.addEventListener('click', () => {
-                    // Logic for what happens when you click the icon
-                    alert('Icon clicked: ' + this.el.getAttribute('name'));
+                var data = this.data;
+                var el = this.el; // The entity element
+                var originalColor = el.getAttribute('material').color; // Store original color
+
+                el.addEventListener('mouseenter', function () {
+                    el.setAttribute('material', 'color', data.hoverColor); // Highlight color
+                });
+
+                el.addEventListener('mouseleave', function () {
+                    el.setAttribute('material', 'color', originalColor); // Original color
+                });
+
+                el.addEventListener('click', function () {
+                    // Logic to open the app
+                    alert('App clicked: ' + data.name);
                 });
             }
         });
@@ -21,28 +37,30 @@
     <a-scene>
         <!-- Preload assets -->
         <a-assets>
-            <img id="icon-image" src="https://i.ibb.co/2FfYn4C/47024.jpg">
+            <!-- Example for preloading one icon -->
+            <img id="icon1" src="local_path_to_icon_image1.jpg">
+            <!-- Include other icons here -->
         </a-assets>
 
-        <!-- Camera with a cursor that has a raycaster -->
+        <!-- Camera with cursor -->
         <a-camera>
-            <a-cursor
-                id="cursor"
-                fuse="true"
-                fuse-timeout="1500"
-                raycaster="objects: .clickable"></a-cursor>
+            <a-cursor id="cursor"
+                      fuse="true"
+                      fuse-timeout="1500"
+                      raycaster="objects: .clickable"></a-cursor>
         </a-camera>
 
         <!-- Icons Grid -->
         <a-entity id="icons-grid" position="-2.5 1 -3">
             <!-- Example for one icon -->
-            <a-entity class="clickable" icon-handler name="icon1" position="0 0 0">
-                <a-plane src="#icon-image"
-                         width="1" height="1" position="0 0 -0.1"></a-plane>
+            <a-entity class="clickable" icon-interact="name: App 1" position="0 0 0">
+                <a-plane src="#icon1"
+                         width="1" height="1"
+                         material="shader: flat"></a-plane>
                 <a-text value="App 1" align="center"
-                        position="0 -0.75 0" width="2"></a-text>
+                        position="0 -0.75 0" width="4"></a-text>
             </a-entity>
-            <!-- Add more icons here -->
+            <!-- Repeat for other icons -->
         </a-entity>
 
         <!-- Environment -->
