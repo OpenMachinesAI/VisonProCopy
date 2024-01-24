@@ -5,29 +5,28 @@
     <title>VR Interface with Clickable Icons</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script>
-        // Component to handle icon hover and click
         AFRAME.registerComponent('icon-interact', {
             schema: {
-                color: {default: '#FFF'},
                 hoverColor: {default: '#FF0'},
-                name: {default: ''}
+                originalColor: {default: '#FFF'}
             },
             init: function () {
-                var data = this.data;
-                var el = this.el; // The entity element
-                var originalColor = el.getAttribute('material').color; // Store original color
+                // Set the original color on the material component
+                this.el.setAttribute('material', { color: this.data.originalColor });
 
-                el.addEventListener('mouseenter', function () {
-                    el.setAttribute('material', 'color', data.hoverColor); // Highlight color
+                this.el.addEventListener('mouseenter', () => {
+                    // Change color to hover color
+                    this.el.setAttribute('material', 'color', this.data.hoverColor);
                 });
 
-                el.addEventListener('mouseleave', function () {
-                    el.setAttribute('material', 'color', originalColor); // Original color
+                this.el.addEventListener('mouseleave', () => {
+                    // Change color back to original
+                    this.el.setAttribute('material', 'color', this.data.originalColor);
                 });
 
-                el.addEventListener('click', function () {
-                    // Logic to open the app
-                    alert('App clicked: ' + data.name);
+                this.el.addEventListener('click', () => {
+                    // Handle the click event
+                    alert('Icon clicked: ' + this.el.getAttribute('name'));
                 });
             }
         });
@@ -37,9 +36,7 @@
     <a-scene>
         <!-- Preload assets -->
         <a-assets>
-            <!-- Example for preloading one icon -->
-            <img id="icon1" src="local_path_to_icon_image1.jpg">
-            <!-- Include other icons here -->
+            <img id="icon-image" src="image.png">
         </a-assets>
 
         <!-- Camera with cursor -->
@@ -53,13 +50,14 @@
         <!-- Icons Grid -->
         <a-entity id="icons-grid" position="-2.5 1 -3">
             <!-- Example for one icon -->
-            <a-entity class="clickable" icon-interact="name: App 1" position="0 0 0">
-                <a-plane src="#icon1"
-                         width="1" height="1"
-                         material="shader: flat"></a-plane>
-                <a-text value="App 1" align="center"
-                        position="0 -0.75 0" width="4"></a-text>
-            </a-entity>
+            <a-plane class="clickable"
+                     icon-interact
+                     src="#icon-image"
+                     width="1" height="1"
+                     position="0 0 -2"
+                     name="App 1"></a-plane>
+            <a-text value="App 1" align="center"
+                    position="0 -1 -2" width="4"></a-text>
             <!-- Repeat for other icons -->
         </a-entity>
 
