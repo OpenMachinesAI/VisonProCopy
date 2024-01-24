@@ -5,11 +5,13 @@
     <title>VR Interface with Clickable Icons</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script>
-        AFRAME.registerComponent('clickable', {
+        // Component to handle clicks on the icons
+        AFRAME.registerComponent('icon-handler', {
             init: function () {
-                this.el.addEventListener('click', () => {
-                    // Replace this alert with your actual click logic
-                    alert('Clicked on: ' + this.el.getAttribute('name'));
+                this.el.addEventListener('click', (evt) => {
+                    console.log('Icon clicked:', this.el.getAttribute('name'));
+                    // Replace this log with any action you want to execute on click
+                    alert('Icon clicked: ' + this.el.getAttribute('name'));
                 });
             }
         });
@@ -17,31 +19,24 @@
 </head>
 <body>
     <a-scene>
-        <!-- Camera with raycaster setup for desktop and VR modes -->
-        <a-camera position="0 1.6 0">
-            <a-cursor 
-                id="cursor"
-                fuse="true" 
-                fuse-timeout="500"
-                raycaster="objects: .clickable; far: 10"
-                position="0 0 -1"
-                geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
-                material="color: black; shader: flat">
-            </a-cursor>
+        <!-- Camera with a cursor that has a raycaster -->
+        <a-camera>
+            <a-cursor id="cursor"
+                      fuse="true"
+                      fuse-timeout="1500"
+                      raycaster="objects: .clickable"></a-cursor>
         </a-camera>
 
-        <!-- Rounded Icons Grid -->
+        <!-- Icons Grid -->
         <a-entity id="icons-grid" position="-2.5 1 -3">
-            <!-- Icons -->
-            <!-- Repeat this for each icon, changing the ID, position, and image path -->
-            <a-entity class="clickable" position="0 0 0" name="icon1">
-                <a-image src="path_to_icon_image.png"
-                         width="0.5" height="0.5" position="0 0 0" 
-                         rounded="true" color="#FFF"></a-image>
-                <a-text value="App 1" align="center" 
-                        position="0 -0.6 0" width="4"></a-text>
+            <!-- Example for one icon -->
+            <a-entity class="clickable" icon-handler name="icon1" position="0 0 0">
+                <a-plane src="path_to_icon_image.png"
+                         width="1" height="1" position="0 0 -0.1"></a-plane>
+                <a-text value="App 1" align="center"
+                        position="0 -0.75 0" width="2"></a-text>
             </a-entity>
-            <!-- Repeat for other icons -->
+            <!-- Add more icons here -->
         </a-entity>
 
         <!-- Environment -->
