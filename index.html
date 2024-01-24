@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>VRPC Interface</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script>
+        // Component to handle gaze interaction
+        AFRAME.registerComponent('gaze-interaction', {
+            init: function () {
+                var el = this.el;
+                el.addEventListener('click', function () {
+                    alert('App would open here');
+                });
+                el.addEventListener('mouseenter', function () {
+                    el.setAttribute('material', 'color', 'yellow'); // Highlight
+                });
+                el.addEventListener('mouseleave', function () {
+                    el.setAttribute('material', 'color', '#4CC3D9'); // Original color
+                });
+            }
+        });
+
+        // Placeholder for future app window manipulation
+        AFRAME.registerComponent('drag-rotate-component',{
+            schema : { speed : {default:1}},
+            init : function(){
+                this.ifMouseDown = false;
+                this.x_cord = 0;
+                this.y_cord = 0;
+                document.addEventListener('mousedown',this.OnDocumentMouseDown.bind(this));
+                document.addEventListener('mouseup',this.OnDocumentMouseUp.bind(this));
+                document.addEventListener('mousemove',this.OnDocumentMouseMove.bind(this));
+            },
+            OnDocumentMouseDown : function(event){
+                this.ifMouseDown = true;
+                this.x_cord = event.clientX;
+                this.y_cord = event.clientY;
+            },
+            OnDocumentMouseUp : function(){
+                this.ifMouseDown = false;
+            },
+            OnDocumentMouseMove : function(event){
+                if(this.ifMouseDown){
+                    var temp_x = event.clientX-this.x_cord;
+                    var temp_y = event.clientY-this.y_cord;
+                    this.el.object3D.rotateY(temp_x*this.data.speed/1000);
+                    this.el.object3D.rotateX(temp_y*this.data.speed/1000);
+                    this.x_cord = event.clientX;
+                    this.y_cord = event.clientY;
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+    <a-scene>
+        <a-sky color="#ECECEC"></a-sky>
+        <!-- Basic app icon representation -->
+        <a-box position="0 1 -3" rotation="0 45 0" color="#4CC3D9" gaze-interaction drag-rotate-component></a-box>
+    </a-scene>
+</body>
+</html>
