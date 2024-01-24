@@ -2,15 +2,14 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>VR Interface with Clickable Icons</title>
+    <title>VR Interface with Preloaded Clickable Icons</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script>
         // Component to handle clicks on the icons
         AFRAME.registerComponent('icon-handler', {
             init: function () {
-                this.el.addEventListener('click', (evt) => {
-                    console.log('Icon clicked:', this.el.getAttribute('name'));
-                    // Replace this log with any action you want to execute on click
+                this.el.addEventListener('click', () => {
+                    // Logic for what happens when you click the icon
                     alert('Icon clicked: ' + this.el.getAttribute('name'));
                 });
             }
@@ -19,19 +18,25 @@
 </head>
 <body>
     <a-scene>
+        <!-- Preload assets -->
+        <a-assets>
+            <img id="icon-image" src="path_to_your_downloaded_image.jpg">
+        </a-assets>
+
         <!-- Camera with a cursor that has a raycaster -->
         <a-camera>
-            <a-cursor id="cursor"
-                      fuse="true"
-                      fuse-timeout="1500"
-                      raycaster="objects: .clickable"></a-cursor>
+            <a-cursor
+                id="cursor"
+                fuse="true"
+                fuse-timeout="1500"
+                raycaster="objects: .clickable"></a-cursor>
         </a-camera>
 
         <!-- Icons Grid -->
         <a-entity id="icons-grid" position="-2.5 1 -3">
             <!-- Example for one icon -->
             <a-entity class="clickable" icon-handler name="icon1" position="0 0 0">
-                <a-plane src="path_to_icon_image.png"
+                <a-plane src="#icon-image"
                          width="1" height="1" position="0 0 -0.1"></a-plane>
                 <a-text value="App 1" align="center"
                         position="0 -0.75 0" width="2"></a-text>
