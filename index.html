@@ -2,93 +2,64 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>VR Interface with Interactive Windows</title>
+    <title>VR Interface with App Links</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script>
-        // Component for opening and managing app windows
-        AFRAME.registerComponent('app-window', {
+        AFRAME.registerComponent('link-setup', {
             schema: {
-                src: { default: '' }, // The source for the iframe
-                width: { default: 4 }, // Width of the window
-                height: { default: 2.25 } // Height of the window, 16:9 aspect ratio
+                url: {default: ''}
             },
-            init: function () {
+            init: function() {
                 var data = this.data;
-                var el = this.el;
-
-                el.addEventListener('click', () => {
-                    // Create the iframe element
-                    var windowEl = document.createElement('a-entity');
-                    windowEl.setAttribute('geometry', {
-                        primitive: 'plane',
-                        width: data.width,
-                        height: data.height
-                    });
-                    windowEl.setAttribute('material', { color: '#FFF' });
-                    windowEl.setAttribute('position', { x: 0, y: data.height / 2, z: -1 });
-
-                    // Set the src of the iframe to the YouTube URL
-                    var iframe = document.createElement('iframe');
-                    iframe.setAttribute('src', data.src);
-                    iframe.style.width = `${data.width * 1000}px`;
-                    iframe.style.height = `${data.height * 1000}px`;
-
-                    // Use a proxy component to include the iframe
-                    windowEl.setAttribute('proxy', { iframe: iframe });
-
-                    // Append the window to the scene
-                    this.el.sceneEl.appendChild(windowEl);
+                this.el.addEventListener('click', function () {
+                    // Start the fade-out animation, then change the location.
+                    document.querySelector('a-scene').emit('fadeOut');
+                    setTimeout(function () {
+                        window.location.href = data.url;
+                    }, 1000); // Corresponds to the animation duration
                 });
             }
         });
 
-        // Proxy component to handle the iframe content
-        AFRAME.registerComponent('proxy', {
-            schema: {
-                iframe: { type: 'selector' }
-            },
-            init: function () {
-                var el = this.el;
-                var data = this.data;
-
-                // When the entity is loaded, we append the iframe
-                el.addEventListener('loaded', () => {
-                    el.appendChild(data.iframe);
+        AFRAME.registerComponent('fade-animation', {
+            init: function() {
+                // Listen for the fadeOut event to start the fade-out animation
+                this.el.sceneEl.addEventListener('fadeOut', () => {
+                    this.el.setAttribute('animation__fade', {
+                        property: 'material.color',
+                        startEvents: 'fadeOut',
+                        dir: 'alternate',
+                        dur: 1000,
+                        from: '#FFF',
+                        to: '#000'
+                    });
                 });
             }
         });
     </script>
 </head>
 <body>
-    <a-scene>
+    <a-scene fade-animation>
         <!-- Preload assets -->
         <a-assets>
-            <img id="youtube-icon" src="youtube_icon.png">
-            <!-- Include other icons and assets here -->
+            <img id="app-icon-1" src="app_icon_1.png">
+            <!-- Add more icons here -->
         </a-assets>
 
         <!-- Camera with cursor -->
         <a-camera>
-            <a-cursor
-                id="cursor"
-                fuse="true"
-                fuse-timeout="1500"
-                raycaster="objects: .clickable"></a-cursor>
+            <a-cursor id="cursor"
+                      fuse="true"
+                      fuse-timeout="1500"
+                      raycaster="objects: .clickable"></a-cursor>
         </a-camera>
 
-        <!-- Icons Grid -->
-        <a-entity id="icons-grid" position="-2.5 2 -3">
-            <!-- YouTube Icon -->
-            <a-plane class="clickable"
-                     app-window="src: https://piped.kavin.rocks/trending"
-                     src="#youtube-icon"
-                     width="1" height="1"
-                     position="0 0 -2"
-                     name="YouTube"></a-plane>
-            <a-text value="YouTube" align="center"
-                    position="0 -1 -2" width="4"></a-text>
-            <!-- Repeat for other icons -->
+        <!-- App Icons -->
+        <a-entity class="clickable" link-setup="url:app_1.html" position="-1 1 -3">
+            <a-image src="#app-icon-1" width="1" height="1"></a-image>
+            <a-text value="App 1" align="center" position="0 -1 0" width="4"></a-text>
         </a-entity>
+        <!-- Repeat for other apps -->
 
         <!-- Environment -->
         <a-sky color="#ECECEC"></a-sky>
